@@ -3,7 +3,7 @@
 
 This repository contains the codes and resources related to the following paper:
 
-    @article{ghasemi2024ML4CAD,
+    @article{ghasemi2024RL4CAD,
     title={Personalized Decision Making for Coronary Artery Disease Treatment using Offline Reinforcement Learning},
     author={Ghasemi, Peyman and White, James A and Lee, Joon},
     year={2024},
