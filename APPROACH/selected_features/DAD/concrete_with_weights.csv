@@ -1,0 +1,101 @@
+code,chapter,rank,description
+I,I,0,Certain infectious and parasitic diseases
+A30-A49,I,1,Other bacterial diseases
+B95-B98,I,1,"Bacterial, viral and other infectious agents"
+II,II,0,Neoplasms
+C76-C80,II,2,"Malignant neoplasms of ill-defined, secondary and unspecified sites"
+C81-C96,II,2,"Malignant neoplasms, stated or presumed to be primary, of lymphoid, haematopoietic and related tissue"
+D10-D36,II,1,Benign neoplasms
+D50-D53,III,1,Nutritional anaemias
+III,III,0,Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism
+E00-E07,IV,1,Disorders of thyroid gland
+E10,IV,2,Type 1 diabetes mellitus
+E11,IV,2,Type 2 diabetes mellitus
+E1152,IV,4,Type 2 diabetes mellitus with certain circulatory complications
+E117,IV,3,Type 2 diabetes mellitus with multiple complications
+E14,IV,2,Unspecified diabetes mellitus
+E20-E35,IV,1,Disorders of other endocrine glands
+E65-E68,IV,1,Obesity and other hyperalimentation
+E70-E90,IV,1,Metabolic disorders
+E87,IV,2,"Other disorders of fluid, electrolyte and acid-base balance"
+V,V,0,Mental and behavioural disorders
+F10-F19,V,1,Mental and behavioural disorders due to psychoactive substance use
+VI,VI,0,Diseases of the nervous system
+G40-G47,VI,1,Episodic and paroxysmal disorders
+G99,VI,2,Other disorders of nervous system in diseases classified elsewhere
+VII,VII,0,Diseases of the eye and adnexa
+VIII,VIII,0,Diseases of the ear and mastoid process
+I100,IX,3,Benign hypertension
+I10-I15,IX,1,Hypertensive diseases
+I20,IX,2,Angina pectoris
+I21,IX,2,Acute myocardial infarction
+I24,IX,2,Other acute ischaemic heart diseases
+I25,IX,2,Chronic ischaemic heart disease
+I2510,IX,4,Atherosclerotic heart disease of native coronary artery
+I26-I28,IX,1,Pulmonary heart disease and diseases of pulmonary circulation
+I35,IX,2,Nonrheumatic aortic valve disorders
+I42,IX,2,Cardiomyopathy
+I44,IX,2,Atrioventricular and left bundle-branch block
+I47,IX,2,Paroxysmal tachycardia
+I480,IX,3,Paroxysmal atrial fibrillation
+I489,IX,3,"Atrial fibrillation and atrial flutter, unspecified"
+I49,IX,2,Other cardiac arrhythmias
+I50,IX,2,Heart failure
+I51,IX,2,Complications and ill-defined descriptions of heart disease
+I60-I69,IX,1,Cerebrovascular diseases
+I70-I79,IX,1,"Diseases of arteries, arterioles and capillaries"
+I95-I99,IX,1,Other and unspecified disorders of the circulatory system
+X,X,0,Diseases of the respiratory system
+J09-J18,X,1,Influenza and pneumonia
+J44,X,2,Other chronic obstructive pulmonary disease
+J95-J99,X,1,Other diseases of the respiratory system
+XI,XI,0,Diseases of the digestive system
+K20-K31,XI,1,"Diseases of oesophagus, stomach and duodenum"
+K40-K46,XI,1,Hernia
+K55-K64,XI,1,Other diseases of intestines
+K80-K87,XI,1,"Disorders of gallbladder, biliary tract and pancreas"
+XII,XII,0,Diseases of the skin and subcutaneous tissue
+M00-M25,XIII,1,Arthropathies
+M17,XIII,3,Gonarthrosis [arthrosis of knee]
+M40-M54,XIII,1,Dorsopathies
+M60-M79,XIII,1,Soft tissue disorders
+M80-M94,XIII,1,Osteopathies and chondropathies
+N00-N08,XIV,1,Glomerular diseases
+N10-N16,XIV,1,Renal tubulo-interstitial diseases
+N17,XIV,2,Acute renal failure
+N18,XIV,2,Chronic kidney disease
+N20-N23,XIV,1,Urolithiasis
+N30-N39,XIV,1,Other diseases of urinary system
+N40-N51,XIV,1,Diseases of male genital organs
+N80-N98,XIV,1,Noninflammatory disorders of female genital tract
+N99,XIV,2,"Postprocedural disorders of genitourinary system, not elsewhere classified"
+XVII,XVII,0,"Congenital malformations, deformations and chromosomal abnormalities"
+R00-R09,XVIII,1,Symptoms and signs involving the circulatory and respiratory systems
+XVIII,XVIII,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified"
+R10-R19,XVIII,1,Symptoms and signs involving the digestive system and abdomen
+R25-R29,XVIII,1,Symptoms and signs involving the nervous and musculoskeletal systems
+R30-R39,XVIII,1,Symptoms and signs involving the urinary system
+R40-R46,XVIII,1,"Symptoms and signs involving cognition, perception, emotional state and behaviour"
+R50-R69,XVIII,1,General symptoms and signs
+R70-R79,XVIII,1,"Abnormal findings on examination of blood, without diagnosis"
+R9430,XVIII,4,Electrocardiogram suggestive of st segment elevation myocardial infarction [STEMI]
+S00-S09,XIX,1,Injuries to the head
+XIX,XIX,0,"Injury, poisoning and certain other consequences of external causes"
+T36-T50,XIX,1,"Poisoning by drugs, medicaments and biological substances"
+XXII,XXII,0,Codes for special purposes
+V01-V99,XX,2,Transport accidents
+V01-X59,XX,1,Accidents
+Y40-Y59,XX,2,"Drugs, medicaments and biological substances causing adverse effects in therapeutic use"
+Y60-Y69,XX,2,Misadventures to patients during surgical and medical care
+Y83,XX,3,"Surgical operation and other surgical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure"
+Y83-Y84,XX,2,"Surgical and other medical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure"
+Z20-Z29,XXI,1,Persons with potential health hazards related to communicable diseases
+Z40-Z54,XXI,1,Persons encountering health services for specific procedures and health care
+Z54,XXI,2,Convalescence
+Z55-Z65,XXI,1,Persons with potential health hazards related to socioeconomic and psychosocial circumstances
+Z70-Z76,XXI,1,Persons encountering health services in other circumstances
+Z80-Z99,XXI,1,Persons with potential health hazards related to family and personal history and certain conditions influencing health status
+Z82,XXI,2,Family history of certain disabilities and chronic diseases leading to disablement
+Z85,XXI,2,Personal history of malignant neoplasm
+Z86,XXI,2,Personal history of certain other diseases
+Z95,XXI,2,Presence of cardiac and vascular implants and grafts

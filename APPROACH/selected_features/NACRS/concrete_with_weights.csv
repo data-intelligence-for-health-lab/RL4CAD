@@ -1,0 +1,96 @@
+code,chapter,rank,description
+I,I,0,Certain infectious and parasitic diseases
+II,II,0,Neoplasms
+D10-D36,II,1,Benign neoplasms
+III,III,0,Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism
+E10,IV,2,Type 1 diabetes mellitus
+E11,IV,2,Type 2 diabetes mellitus
+E115,IV,3,Type 2 diabetes mellitus with peripheral circulatory complications
+E14,IV,2,Unspecified diabetes mellitus
+E70-E90,IV,1,Metabolic disorders
+E78,IV,2,Disorders of lipoprotein metabolism and other lipidaemias
+V,V,0,Mental and behavioural disorders
+VI,VI,0,Diseases of the nervous system
+G40-G47,VI,1,Episodic and paroxysmal disorders
+VII,VII,0,Diseases of the eye and adnexa
+H25-H28,VII,1,Disorders of lens
+H30-H36,VII,1,Disorders of choroid and retina
+VIII,VIII,0,Diseases of the ear and mastoid process
+IX,IX,0,Diseases of the circulatory system
+I10,IX,2,Essential (primary) hypertension
+I20,IX,2,Angina pectoris
+I20-I25,IX,1,Ischaemic heart diseases
+I21,IX,2,Acute myocardial infarction
+I25,IX,2,Chronic ischaemic heart disease
+I251,IX,3,Atherosclerotic heart disease
+I30-I52,IX,1,Other forms of heart disease
+I48,IX,2,Atrial fibrillation and flutter
+I49,IX,2,Other cardiac arrhythmias
+I50,IX,2,Heart failure
+I509,IX,3,"Heart failure, unspecified"
+I51,IX,2,Complications and ill-defined descriptions of heart disease
+I60-I69,IX,1,Cerebrovascular diseases
+I70-I79,IX,1,"Diseases of arteries, arterioles and capillaries"
+I80-I89,IX,1,"Diseases of veins, lymphatic vessels and lymph nodes, not elsewhere classified"
+X,X,0,Diseases of the respiratory system
+J09-J18,X,1,Influenza and pneumonia
+J40-J47,X,1,Chronic lower respiratory diseases
+J95-J99,X,1,Other diseases of the respiratory system
+XI,XI,0,Diseases of the digestive system
+K20-K31,XI,1,"Diseases of oesophagus, stomach and duodenum"
+K40-K46,XI,1,Hernia
+K55-K64,XI,1,Other diseases of intestines
+K57,XI,2,Diverticular disease of intestine
+K63,XI,2,Other diseases of intestine
+K80-K87,XI,1,"Disorders of gallbladder, biliary tract and pancreas"
+K90-K93,XI,1,Other diseases of the digestive system
+K929,XI,3,"Disease of digestive system, unspecified"
+XII,XII,0,Diseases of the skin and subcutaneous tissue
+M00-M25,XIII,1,Arthropathies
+M40-M54,XIII,1,Dorsopathies
+M60-M79,XIII,1,Soft tissue disorders
+M80-M94,XIII,1,Osteopathies and chondropathies
+XIV,XIV,0,Diseases of the genitourinary system
+N17-N19,XIV,1,Renal failure
+N18,XIV,2,Chronic kidney disease
+N28,XIV,2,"Other disorders of kidney and ureter, not elsewhere classified"
+N30-N39,XIV,1,Other diseases of urinary system
+R00-R09,XVIII,1,Symptoms and signs involving the circulatory and respiratory systems
+XVIII,XVIII,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified"
+R07,XVIII,2,Pain in throat and chest
+R10-R19,XVIII,1,Symptoms and signs involving the digestive system and abdomen
+R30-R39,XVIII,1,Symptoms and signs involving the urinary system
+R40-R46,XVIII,1,"Symptoms and signs involving cognition, perception, emotional state and behaviour"
+R50-R69,XVIII,1,General symptoms and signs
+R90-R94,XVIII,1,"Abnormal findings on diagnostic imaging and in function studies, without diagnosis"
+XIX,XIX,0,"Injury, poisoning and certain other consequences of external causes"
+S60-S69,XIX,1,Injuries to the wrist and hand
+T80-T88,XIX,1,"Complications of surgical and medical care, not elsewhere classified"
+V01-X59,XX,1,Accidents
+W00-W19,XX,3,Falls
+W20-W49,XX,3,Exposure to inanimate mechanical forces
+Y40-Y84,XX,1,Complications of medical and surgical care
+Y83,XX,3,"Surgical operation and other surgical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure"
+Y83-Y84,XX,2,"Surgical and other medical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure"
+Z01,XXI,2,Other special examinations and investigations of persons without complaint or reported diagnosis
+Z018,XXI,3,Other specified special examinations
+Z03,XXI,2,"Medical observation and evaluation for suspected diseases and conditions, ruled out"
+Z08,XXI,2,Follow-up examination after treatment for malignant neoplasms
+Z09,XXI,2,Follow-up examination after treatment for conditions other than malignant neoplasms
+Z12,XXI,2,Special screening examination for neoplasms
+Z13,XXI,2,Special screening examination for other diseases and disorders
+Z40-Z54,XXI,1,Persons encountering health services for specific procedures and health care
+Z45,XXI,2,Adjustment and management of implanted device
+Z47,XXI,2,Other orthopaedic follow-up care
+Z48,XXI,2,Other surgical follow-up care
+Z49,XXI,2,Care involving dialysis
+Z50,XXI,2,Care involving use of rehabilitation procedures
+Z501,XXI,3,Other physical therapy
+Z51,XXI,2,Other medical care
+Z55-Z65,XXI,1,Persons with potential health hazards related to socioeconomic and psychosocial circumstances
+Z70-Z76,XXI,1,Persons encountering health services in other circumstances
+Z713,XXI,3,Dietary counselling and surveillance
+Z718,XXI,3,Other specified counselling
+Z80-Z99,XXI,1,Persons with potential health hazards related to family and personal history and certain conditions influencing health status
+Z85,XXI,2,Personal history of malignant neoplasm
+Z95,XXI,2,Presence of cardiac and vascular implants and grafts
