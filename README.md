@@ -21,7 +21,7 @@ https://drive.google.com/drive/folders/1SuDCfoNeZWBifAFqBurDAbgfR7Xm2m5x?usp=sha
 ### Requirements
 1- `pip install -r requirements.txt`
 
-2- Propagate `patiens_list.csv` with patient identifier numbers and flags indicating whether they are processed.
+2- Propagate `RL/patiens_list.csv` with patient identifier numbers and flags indicating whether they are processed.
 
 ### Files and Folders Structure
 ```
