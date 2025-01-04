@@ -1,8 +1,8 @@
 import os
 
-n_clusters_list_cath = range(20, 300, 1)
-major_save_dir = '/home/peyman.ghasemi1/projects/APPROACH_cleaning/all_patients_data'
-agg_strategy_path = '/home/peyman.ghasemi1/projects/APPROACH_cleaning/agg_strategy_v2.csv'
+n_clusters_list_cath = range(20, 500, 1)
+major_save_dir = 'RL/all_patients_data'
+agg_strategy_path = 'RL/agg_strategy_v2.csv'
 
 statified_patient_list_path = 'stratified_patient_lists'
 processed_data_path = 'processed_data'

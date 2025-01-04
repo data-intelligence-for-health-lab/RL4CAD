@@ -15,7 +15,6 @@ import datetime
 from torch.optim import Adam
 import argparse
 from rl_utils import PolicyResolver, weighted_importance_sampling_with_bootstrap
-from train_physician_imitation_model import PhysicianImitator
 import torch
 import torch.nn as nn
 from train_mace_prediction_model import ModelBasedInference

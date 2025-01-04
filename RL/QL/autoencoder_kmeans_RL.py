@@ -7,18 +7,18 @@ import sklearn as sk
 from sklearn import preprocessing
 from sklearn.preprocessing import OneHotEncoder
 import training_constants as tc
-from rl_utils import Episode, Transition, get_episodes, reward_func_mace, ClusteringBasedInference
+from rl_utils import Episode, Transition, get_episodes, ClusteringBasedInference
+from rl_utils import reward_func_mace, reward_func_mace_survival_cost, reward_func_mace_survival, reward_func_mace_survival_repvasc_cost, reward_func_mace_survival_repvasc
 import datetime
 from torch.optim import Adam
 import mdptoolbox
 from rl_utils import PolicyResolver, weighted_importance_sampling_with_bootstrap
 import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from train_physician_imitation_model import PhysicianImitator
 import torch
 import functools
-from autoencoder_training import Autoencoder
-from training_pipeline3 import run_kmeans_and_save
+from QL.autoencoder_sigmoid_training import Autoencoder
+from do_kmeans import run_kmeans_and_save
 import joblib
 from joblib import Parallel, delayed
 import argparse
@@ -29,10 +29,10 @@ device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
 def do_q_learning_and_evaluate_policy(n_clusters,
                                       all_caths_train, all_caths_test,
                                       all_caths_train_clusters, all_caths_test_clusters,
-                                      train_episodes_raw, test_episodes_raw):
+                                      train_episodes_raw, test_episodes_raw, reward_function, only_train=False):
 
     # Load the data
-    behavior_plicy_name = 'physician_imitator'
+    behavior_plicy_name = 'behavior_physician_policy'
     processed_data_path = tc.processed_data_path
     models_path = tc.models_path
     rewards_list = tc.rewards_list
@@ -47,15 +47,14 @@ def do_q_learning_and_evaluate_policy(n_clusters,
     # all_caths_test_clusters = pd.read_csv(os.path.join(processed_data_path, 'test', f'cath_kmeans_clusters_{n_clusters}.csv'))
 
     # encode the actions
-    treatments = tc.treatments
     action_encoder = preprocessing.LabelEncoder()
-    action_encoder.fit(np.array(treatments).reshape(-1, 1))
+    action_encoder.fit(np.array(tc.treatments))
     actions_dict = dict(zip(action_encoder.classes_, action_encoder.transform(action_encoder.classes_)))
     # print("Actions dictionary:", actions_dict)
 
     # Create the episodes
-    train_episodes = get_episodes(all_caths_train, all_caths_train_clusters, action_encoder, rewards_list, reward_func_mace)
-    test_episodes = get_episodes(all_caths_test, all_caths_test_clusters, action_encoder, rewards_list, reward_func_mace)
+    train_episodes = get_episodes(all_caths_train, all_caths_train_clusters, action_encoder, rewards_list, reward_function)
+    test_episodes = get_episodes(all_caths_test, all_caths_test_clusters, action_encoder, rewards_list, reward_function)
 
 
     # Create transition matrix
@@ -100,17 +99,12 @@ def do_q_learning_and_evaluate_policy(n_clusters,
     optimal_policy = ql.policy
     Q_matrix = ql.Q
 
-    # calculate softmax of Q-matrix
-    optimal_policy_probs = np.zeros_like(Q_matrix)
-    for i in range(Q_matrix.shape[0]):
-        max_q = np.max(Q_matrix[i, :])  # Find the maximum value in the Q-matrix row to avoid numerical instability (overflow)
-        optimal_policy_probs[i, :] = np.exp(Q_matrix[i, :] - max_q) / np.sum(np.exp(Q_matrix[i, :] - max_q))
 
-    # calculate the optimal policy and print them
-    # for state in range(n_clusters):
-    #     op = optimal_policy[state]
-    #     pp = np.argmax(physician_policy[state, :])
-        # print(f'State {state}: physician policy = {list(actions_dict.keys())[pp]}, optimal policy = {list(actions_dict.keys())[op]}')
+    # calculate the optimal policy probabilities
+    Q_matrix_sum = np.sum(Q_matrix, axis=1, keepdims=True)
+    Q_matrix_sum[Q_matrix_sum == 0] = 1  # set the states with no actions to 1 to avoid division by 0
+    optimal_policy_probs = Q_matrix / Q_matrix_sum
+
 
     # calculate the greedy policy for the physician
     greedy_physician_policy = np.zeros((len(optimal_policy), len(actions_dict)))
@@ -125,7 +119,11 @@ def do_q_learning_and_evaluate_policy(n_clusters,
     # save the policies to a file
     policies = {'physician': physician_policy, 'optimal': optimal_policy_probs, 'greedy_physician': greedy_physician_policy}
 
+    if only_train:
+        return None, policies
 
+
+    # EVALUATION with the Behavior Policy: Same Clustering Model
     # resolve the policies
     physician_policy_resolver = PolicyResolver(physician_policy, list(actions_dict.values()))
     greedy_physician_policy_resolver = PolicyResolver(greedy_physician_policy, list(actions_dict.values()))
@@ -134,107 +132,56 @@ def do_q_learning_and_evaluate_policy(n_clusters,
 
     # Evaluate the policies
     results = {}
-    # print(f"Evaluating the policies using weighted importance sampling with bootstrap for number of clusters = {n_clusters}")
-    wis, ci = weighted_importance_sampling_with_bootstrap(test_episodes, 0.99, physician_policy_resolver, physician_policy_resolver, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results['physician'] = [wis, ci[0], ci[1]]
-    wis, ci = weighted_importance_sampling_with_bootstrap(train_episodes, 0.99, physician_policy_resolver, physician_policy_resolver, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results['physician_train'] = [wis, ci[0], ci[1]]
-    # print(f"Weighted importance sampling for the physician's policy: {wis}, CI: {ci}")
-    wis, ci = weighted_importance_sampling_with_bootstrap(test_episodes, 0.99, greedy_physician_policy_resolver, physician_policy_resolver, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results['greedy_physician'] = [wis, ci[0], ci[1]]
-    wis, ci = weighted_importance_sampling_with_bootstrap(train_episodes, 0.99, greedy_physician_policy_resolver, physician_policy_resolver, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results['greedy_physician_train'] = [wis, ci[0], ci[1]]   
-    # print(f"Weighted importance sampling for the greedy physician's policy: {wis}, CI: {ci}")
-    wis, ci = weighted_importance_sampling_with_bootstrap(test_episodes, 0.99, optimal_policy_resolver, physician_policy_resolver, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results['optimal'] = [wis, ci[0], ci[1]]
-    wis, ci = weighted_importance_sampling_with_bootstrap(train_episodes, 0.99, optimal_policy_resolver, physician_policy_resolver, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results['optimal_train'] = [wis, ci[0], ci[1]]
-    # print(f"Weighted importance sampling for the optimal policy: {wis}, CI: {ci}")
-    wis, ci = weighted_importance_sampling_with_bootstrap(test_episodes, 0.99, greedy_optimal_policy_resolver, physician_policy_resolver, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results['greedy_optimal'] = [wis, ci[0], ci[1]]
+    for dataset_name, dataset in [('test', test_episodes), ('train', train_episodes)]:
+        for eval_policy_name, eval_policy_resolver in [('physician', physician_policy_resolver),
+                                                       ('greedy_physician', greedy_physician_policy_resolver),
+                                                       ('optimal', optimal_policy_resolver),
+                                                       ('greedy_optimal', greedy_optimal_policy_resolver)]:
+            wis, ci = weighted_importance_sampling_with_bootstrap(dataset, 0.99, eval_policy_resolver, physician_policy_resolver,
+                                                                  num_bootstrap_samples=1000, N=1000, confidedence_level=0.95)
+            results[f"{eval_policy_name}_{dataset_name}"] = [wis, ci[0], ci[1]]
+
     # print('---------------------------------------------------------------------------')
+    # EVALUATION with the Behavior Policy: Best Clustering Model for the Physician Imitation
 
-    # put the optimal policy inside the test episodes
-    for ep, episode in enumerate(test_episodes):
-        raw_episode = test_episodes_raw[ep]
-        for tr, transition in enumerate(episode):
-            state = transition.state
-            state = int(state[0])
-            transition.prediction_probs['optimal'] = optimal_policy_probs[state, :] # put the optimal policy inside the episode
-            transition.prediction_probs[behavior_plicy_name] = raw_episode.transitions[tr].prediction_probs[behavior_plicy_name] # put the physician's policy inside the episode
+    current_physician_policy_probs = policies['physician']
+    current_physician_policy_greedy_probs = policies['greedy_physician']
 
-    # put the optimal policy inside the train episodes
-    for ep, episode in enumerate(train_episodes):
-        raw_episode = train_episodes_raw[ep]
-        for tr, transition in enumerate(episode):
-            state = transition.state
-            state = int(state[0])
-            transition.prediction_probs['optimal'] = optimal_policy_probs[state, :] # put the optimal policy inside the episode
-            transition.prediction_probs[behavior_plicy_name] = raw_episode.transitions[tr].prediction_probs[behavior_plicy_name] # put the physician's policy inside the episode
+    # make greedy optimal policy
+    greedy_optimal_policy_probs = np.zeros((optimal_policy_probs.shape[0], optimal_policy_probs.shape[1]))
+    greedy_optimal_policy_probs[np.arange(optimal_policy_probs.shape[0]), np.argmax(optimal_policy_probs, axis=1)] = 1.0    
+    
+    # put the best physician policy inside the episodes
+    for dataset, raw_dataset in [(train_episodes, train_episodes_raw), (test_episodes, test_episodes_raw)]:
+        for ep, episode in enumerate(dataset):
+            raw_episode = raw_dataset[ep]
+            for tr, transition in enumerate(episode):
+                state = transition.state
+                state = int(state[0])
+                transition.prediction_probs['optimal'] = optimal_policy_probs[state, :] # put the optimal policy inside the episode
+                transition.prediction_probs['greedy_optimal'] = greedy_optimal_policy_probs[state, :] # put the greedy optimal policy inside the episode
+                transition.prediction_probs['current_physician_policy'] = current_physician_policy_probs[state, :] # put the current physician policy inside the episode
+                transition.prediction_probs['current_greedy_physician_policy'] = current_physician_policy_greedy_probs[state, :] # put the current physician policy inside the episode
+                transition.prediction_probs[behavior_plicy_name] = raw_episode.transitions[tr].prediction_probs[behavior_plicy_name] # put the physician's policy inside the episode
+
+
 
     # # evaluate using the imitator model as the behavior policy
-    behavior_plicy = PolicyResolver(behavior_plicy_name, list(actions_dict.values()))
-    clustering_policy = PolicyResolver('optimal', list(actions_dict.values()))
-    wis, ci = weighted_importance_sampling_with_bootstrap(test_episodes, 0.99, clustering_policy, behavior_plicy, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results['optimal_vs_imitation'] = [wis, ci[0], ci[1]]
-    wis, ci = weighted_importance_sampling_with_bootstrap(train_episodes, 0.99, clustering_policy, behavior_plicy, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results['optimal_vs_imitation_train'] = [wis, ci[0], ci[1]]
+    behavior_plicy_resolver = PolicyResolver(behavior_plicy_name, list(actions_dict.values()))
+    for dataset_name, dataset in [('test', test_episodes), ('train', train_episodes)]:
+        for eval_policy_name in ['optimal', 'greedy_optimal', 'current_physician_policy', 'current_greedy_physician_policy']:
+            eval_policy_resolver = PolicyResolver(eval_policy_name, list(actions_dict.values()))
+            wis, ci = weighted_importance_sampling_with_bootstrap(dataset, 0.99, eval_policy_resolver, behavior_plicy_resolver,
+                                                                  num_bootstrap_samples=1000, N=1000, confidedence_level=0.95)
+            results[f"{eval_policy_name}_{dataset_name}_vs_{behavior_plicy_name}"] = [wis, ci[0], ci[1]]
 
     return results, policies
-
-def eval_job_for_vanilla_kmeans(n_clusters,
-                      all_caths_train, all_caths_test,
-                      train_episodes_raw, test_episodes_raw):
-    """
-    Evaluate the policy for a specific number of clusters
-
-    """
-    all_caths_train_clusters = pd.read_csv(os.path.join(processed_data_path, 'train', f'cath_kmeans_clusters_{n_clusters}.csv'))
-    all_caths_test_clusters = pd.read_csv(os.path.join(processed_data_path, 'test', f'cath_kmeans_clusters_{n_clusters}.csv'))
-    
-    results,policies = do_q_learning_and_evaluate_policy(n_clusters,
-                                                all_caths_train, all_caths_test,
-                                                all_caths_train_clusters, all_caths_test_clusters,
-                                                train_episodes_raw, test_episodes_raw)
-    results_row = {'n_clusters': n_clusters,
-                    'physician_wis': results['physician'][0],
-                    'physician_LB': results['physician'][1],
-                    'physician_UB': results['physician'][2],
-                    'greedy_physician_wis': results['greedy_physician'][0],
-                    'greedy_physician_LB': results['greedy_physician'][1],
-                    'greedy_physician_UB': results['greedy_physician'][2],
-                    'optimal_wis': results['optimal'][0],
-                    'optimal_LB': results['optimal'][1],
-                    'optimal_UB': results['optimal'][2],
-                    'optimal_vs_imitation_wis': results['optimal_vs_imitation'][0],
-                    'optimal_vs_imitation_LB': results['optimal_vs_imitation'][1],
-                    'optimal_vs_imitation_UB': results['optimal_vs_imitation'][2],
-                    'physician_train_wis': results['physician_train'][0],
-                    'physician_train_LB': results['physician_train'][1],
-                    'physician_train_UB': results['physician_train'][2],
-                    'greedy_physician_train_wis': results['greedy_physician_train'][0],
-                    'greedy_physician_train_LB': results['greedy_physician_train'][1],
-                    'greedy_physician_train_UB': results['greedy_physician_train'][2],
-                    'optimal_train_wis': results['optimal_train'][0],
-                    'optimal_train_LB': results['optimal_train'][1],
-                    'optimal_train_UB': results['optimal_train'][2],
-                    'greedy_optimal_wis': results['greedy_optimal'][0],
-                    'greedy_optimal_LB': results['greedy_optimal'][1],
-                    'greedy_optimal_UB': results['greedy_optimal'][2],
-                    'optimal_vs_imitation_train_wis': results['optimal_vs_imitation_train'][0],
-                    'optimal_vs_imitation_train_LB': results['optimal_vs_imitation_train'][1],
-                    'optimal_vs_imitation_train_UB': results['optimal_vs_imitation_train'][2]
-                    }
-    
-    print(f"Finished evaluating the policies for number of clusters = {n_clusters}")
-
-    return results_row
 
 
 def eval_job_for_autoencoder_kmeans(n_clusters,
                       all_caths_train, all_caths_test,
                       train_episodes_raw, test_episodes_raw,
-                      all_caths_train_imputed, all_caths_test_imputed,
+                      all_caths_train_imputed, all_caths_test_imputed, reward_function,
                       read_clusters_from_file=False, experiment_type='autoencoder_kmeans'):
     
     train_clusters_path = os.path.join(tc.processed_data_path, 'train', f'{experiment_type}', f'{experiment_type}_kmeans_clusters_{n_clusters}.csv')
@@ -255,44 +202,31 @@ def eval_job_for_autoencoder_kmeans(n_clusters,
         
     all_caths_test_clusters = pd.read_csv(test_clusters_path)
 
+    # validation_clusters_path = os.path.join(tc.processed_data_path, 'validation', f'{experiment_type}', f'{experiment_type}_kmeans_clusters_{n_clusters}.csv')
+    # if not (os.path.exists(validation_clusters_path) and read_clusters_from_file):
+    #     run_kmeans_and_save([n_clusters], all_caths_validation_imputed, f'{experiment_type}',
+    #                         os.path.join(tc.processed_data_path, 'validation', f'{experiment_type}'),
+    #                         os.path.join(tc.models_path, f'{experiment_type}_models'),
+    #                         load_existing=True, verbose=True)
+
+    # all_caths_validation_clusters = pd.read_csv(validation_clusters_path)
+
 
     results,policies = do_q_learning_and_evaluate_policy(n_clusters,
                                                 all_caths_train, all_caths_test,
                                                 all_caths_train_clusters, all_caths_test_clusters,
-                                                train_episodes_raw, test_episodes_raw)
+                                                train_episodes_raw, test_episodes_raw, reward_function)
     
-    policies_file = os.path.join(tc.models_path, f'{experiment_type}_models', f'policies_{n_clusters}.pkl')
+    # policies_file = os.path.join(tc.models_path, f'{experiment_type}_models', f'policies_{n_clusters}.pkl')
+    policies_file = os.path.join(tc.models_path, f'{experiment_name}_rl_policies', f'policies_{n_clusters}.pkl')
     pickle.dump(policies, open(policies_file, 'wb'))
     
-    results_row = {'n_clusters': n_clusters,
-                    'physician_wis': results['physician'][0],
-                    'physician_LB': results['physician'][1],
-                    'physician_UB': results['physician'][2],
-                    'greedy_physician_wis': results['greedy_physician'][0],
-                    'greedy_physician_LB': results['greedy_physician'][1],
-                    'greedy_physician_UB': results['greedy_physician'][2],
-                    'optimal_wis': results['optimal'][0],
-                    'optimal_LB': results['optimal'][1],
-                    'optimal_UB': results['optimal'][2],
-                    'optimal_vs_imitation_wis': results['optimal_vs_imitation'][0],
-                    'optimal_vs_imitation_LB': results['optimal_vs_imitation'][1],
-                    'optimal_vs_imitation_UB': results['optimal_vs_imitation'][2],
-                    'physician_train_wis': results['physician_train'][0],
-                    'physician_train_LB': results['physician_train'][1],
-                    'physician_train_UB': results['physician_train'][2],
-                    'greedy_physician_train_wis': results['greedy_physician_train'][0],
-                    'greedy_physician_train_LB': results['greedy_physician_train'][1],
-                    'greedy_physician_train_UB': results['greedy_physician_train'][2],
-                    'optimal_train_wis': results['optimal_train'][0],
-                    'optimal_train_LB': results['optimal_train'][1],
-                    'optimal_train_UB': results['optimal_train'][2],
-                    'greedy_optimal_wis': results['greedy_optimal'][0],
-                    'greedy_optimal_LB': results['greedy_optimal'][1],
-                    'greedy_optimal_UB': results['greedy_optimal'][2],
-                    'optimal_vs_imitation_train_wis': results['optimal_vs_imitation_train'][0],
-                    'optimal_vs_imitation_train_LB': results['optimal_vs_imitation_train'][1],
-                    'optimal_vs_imitation_train_UB': results['optimal_vs_imitation_train'][2]
-                    }
+    results_row = {'n_clusters': n_clusters}
+    for key, value in results.items():
+        results_row[key] = value[0]
+        results_row[key + '_LB'] = value[1]
+        results_row[key + '_UB'] = value[2]
+    
     
     print(f"Finished evaluating the policies for number of clusters = {n_clusters}")
     return results_row
@@ -301,27 +235,38 @@ def eval_job_for_autoencoder_kmeans(n_clusters,
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Run the clustering-based inference using Q-Learning')
-    parser.add_argument('--experiment_type', type=str, default='autoencoder_sigmoid_8_kmeans', help='The type of the experiment (autoencoder_kmeans, autoencoder_sigmoid_8_kmeans, vanilla_kmeans)')
-    parser.add_argument('--autoencoder_name', type=str, default='autoencoder_sigmoid_8', help='The name of the autoencoder model')
+    parser.add_argument('--experiment_type', type=str, default='vanilla_kmeans', help='The type of the experiment (autoencoder_kmeans, autoencoder_sigmoid_8_kmeans, vanilla_kmeans)')
+    parser.add_argument('--autoencoder_name', type=str, default=None, help='The name of the autoencoder model')
+    parser.add_argument('--reward_name', type=str, default='mace-survival-repvasc', help='The name of the reward function')
 
     args = parser.parse_args()
     experiment_type = args.experiment_type
     autoencoder_name = args.autoencoder_name
 
+    reward_name = args.reward_name
+    if reward_name == 'mace':
+        reward_function = reward_func_mace
+    elif reward_name == 'mace-survival':
+        reward_function = reward_func_mace_survival
+    elif reward_name == 'mace-survival-repvasc':
+        reward_function = reward_func_mace_survival_repvasc
+
     n_clusters_list = tc.n_clusters_list_cath
-    # n_clusters_list = range(10, 120)
+    # n_clusters_list = range(100, 120)
     # experiment_type = 'autoencoder_sigmoid_8_kmeans'
     # autoencoder_name = 'autoencoder_sigmoid_8'
-    experiment_name = f'{experiment_type}-{n_clusters_list[0]}-{n_clusters_list[-1]}-all-caths' + '-reward-' + 'mace' + '__' + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    experiment_name = f'{experiment_type}-{n_clusters_list[0]}-{n_clusters_list[-1]}-all-caths' + '-reward-' + reward_name + '__' + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
     # autoencoder loading
-    autoencoder_model_path = os.path.join(tc.models_path, autoencoder_name, 'checkpoint.pth')
-    checkpoint = torch.load(autoencoder_model_path)
-    params = checkpoint['parameters']
-    autoencoder = Autoencoder(params['input_dim'], params['latent_dim'], params['num_hidden_layers'], params['activation_fn'])
-    autoencoder.load_state_dict(checkpoint['state_dict'])
-    autoencoder = autoencoder.to(device)
-    autoencoder.eval()
+    if autoencoder_name is not None:
+        autoencoder_model_path = os.path.join(tc.models_path, autoencoder_name, 'checkpoint.pth')
+        checkpoint = torch.load(autoencoder_model_path)
+        params = checkpoint['parameters']
+        autoencoder = Autoencoder(params['input_dim'], params['latent_dim'], params['num_hidden_layers'], params['activation_fn'])
+        autoencoder.load_state_dict(checkpoint['state_dict'])
+        autoencoder = autoencoder.to(device)
+        autoencoder.eval()
+        print(f"Loaded the autoencoder model from {autoencoder_model_path}")
 
     # Load the data
     processed_data_path = tc.processed_data_path
@@ -345,20 +290,47 @@ if __name__ == "__main__":
     print("Actions dictionary:", actions_dict)
 
     # Create the episodes
-    train_episodes_raw = get_episodes(all_caths_train, all_caths_train_imputed, action_encoder, rewards_list, reward_func_mace)
-    test_episodes_raw = get_episodes(all_caths_test, all_caths_test_imputed, action_encoder, rewards_list, reward_func_mace)
+    train_episodes_raw = get_episodes(all_caths_train, all_caths_train_imputed, action_encoder, rewards_list, reward_function)
+    test_episodes_raw = get_episodes(all_caths_test, all_caths_test_imputed, action_encoder, rewards_list, reward_function)
 
+    # best clustering for physician's policy to be used as the behavior policy
+    behavior_experiment_type = tc.experiment_type_behavior_policy
+    behavior_n_clusters = tc.n_clusters_behavior_policy
 
-    # put the behavior plicy of the imitator model (logistic regression) inside the episodes
-    model_path = os.path.join(models_path, 'physician_imitation', 'physician_imitation_logistic_model.pkl')
-    physician_imitator = pickle.load(open(model_path, 'rb'))
-    for dataset in [train_episodes_raw, test_episodes_raw]:
-        for episode in dataset:
-            for transition in episode:
-                state = transition.state
-                sample = state.astype(np.float32).reshape(1, -1)
-                logits = physician_imitator.predict_proba(sample)
-                transition.prediction_probs['physician_imitator'] = logits.reshape(-1)  # imitator model's policy
+    # run the q-learning for the best clustering model for the physician imitation
+    # TODO: It is not necessary to do Q-learning for the behavior policy.
+    # TODO: Since I calculated the physician's policy within that function, I use that.
+    # TODO: The better way is to have a different function for this. Maybe later.
+    behavior_train_clusters_path = os.path.join(tc.processed_data_path, 'train', f'{behavior_experiment_type}', f'{behavior_experiment_type}_kmeans_clusters_{behavior_n_clusters}.csv')
+    behavior_test_clusters_path = os.path.join(tc.processed_data_path, 'test', f'{behavior_experiment_type}', f'{behavior_experiment_type}_kmeans_clusters_{behavior_n_clusters}.csv')
+    behavior_train_clusters = pd.read_csv(behavior_train_clusters_path)
+    behavior_test_clusters = pd.read_csv(behavior_test_clusters_path)
+
+    _,behavior_physician_policy = do_q_learning_and_evaluate_policy(behavior_n_clusters,
+                                                all_caths_train, all_caths_test,
+                                                behavior_train_clusters, behavior_test_clusters,
+                                                None, None, reward_function, only_train=True)
+
+    # behavior_physician_policy = pickle.load(open(os.path.join(tc.models_path, f'{behavior_experiment_type}_models', f'policies_{behavior_n_clusters}.pkl'), 'rb'))
+    behavior_physician_policy = behavior_physician_policy['physician']
+
+    # train_clusters_path = os.path.join(tc.processed_data_path, 'train', f'{experiment_type}', f'{experiment_type}_kmeans_clusters_{behavior_n_clusters}.csv')
+    # test_clusters_path = os.path.join(tc.processed_data_path, 'test', f'{experiment_type}', f'{experiment_type}_kmeans_clusters_{behavior_n_clusters}.csv')
+    # all_caths_train_clusters = pd.read_csv(train_clusters_path)
+    # all_caths_test_clusters = pd.read_csv(test_clusters_path)
+
+    behavior_train_episodes = get_episodes(all_caths_train, behavior_train_clusters, action_encoder, rewards_list, reward_function)
+    behavior_test_episodes = get_episodes(all_caths_test, behavior_test_clusters, action_encoder, rewards_list, reward_function)
+    # behavior_validation_episodes = get_episodes(all_caths_validation, behavior_validation_clusters, action_encoder, rewards_list, reward_function)
+
+    # put the best physician policy, random policy, and single action policies inside the reference episodes
+    # for dataset in [train_episodes_raw, test_episodes_raw]:
+    for dataset, behavior_dataset in [(train_episodes_raw, behavior_train_episodes), (test_episodes_raw, behavior_test_episodes)]:
+        for episode, behavior_episode in zip(dataset, behavior_dataset):
+            for transition, behavior_transition in zip(episode, behavior_episode):
+                behavior_state = behavior_transition.state
+                behavior_state = int(behavior_state[0])
+                transition.prediction_probs['behavior_physician_policy'] = behavior_physician_policy[behavior_state, :]
                 
                 # random action policies
                 random_action = np.random.choice(list(actions_dict.values()))
@@ -370,23 +342,22 @@ if __name__ == "__main__":
                     transition.prediction_probs[action_name] = np.zeros(len(actions_dict))
                     transition.prediction_probs[action_name][action_id] = 1.0
 
-                
 
-
-    if experiment_type == 'vanilla_kmeans':
-        parallel_eval_job = eval_job_for_vanilla_kmeans
-        task_func = functools.partial(parallel_eval_job, train_episodes_raw=train_episodes_raw,
-                                        test_episodes_raw=test_episodes_raw,
-                                        all_caths_train=all_caths_train,
-                                        all_caths_test=all_caths_test)
+    # if experiment_type == 'vanilla_kmeans':
+    #     parallel_eval_job = eval_job_for_autoencoder_kmeans
+    #     task_func = functools.partial(parallel_eval_job, train_episodes_raw=train_episodes_raw,
+    #                                     test_episodes_raw=test_episodes_raw,
+    #                                     all_caths_train=all_caths_train,
+    #                                     all_caths_test=all_caths_test)
         
-    elif experiment_type.startswith('autoencoder'):
-        # create paths for the models and the processed data
-        os.makedirs(os.path.join(tc.models_path, f'{experiment_type}_models'), exist_ok=True)
-        os.makedirs(os.path.join(tc.processed_data_path, 'train', f'{experiment_type}'), exist_ok=True)
-        os.makedirs(os.path.join(tc.processed_data_path, 'test', f'{experiment_type}'), exist_ok=True)
-        os.makedirs(os.path.join(tc.processed_data_path, 'validation', f'{experiment_type}'), exist_ok=True)
+    # create paths for the models and the processed data
+    os.makedirs(os.path.join(tc.models_path, f'{experiment_type}_models'), exist_ok=True)  # to save the clustering models
+    os.makedirs(os.path.join(tc.models_path, f'{experiment_name}_rl_policies'), exist_ok=True)  # to save the policies (different per experiment)
+    os.makedirs(os.path.join(tc.processed_data_path, 'train', f'{experiment_type}'), exist_ok=True)  # to save the clustering results
+    os.makedirs(os.path.join(tc.processed_data_path, 'test', f'{experiment_type}'), exist_ok=True)  # to save the clustering results
+    os.makedirs(os.path.join(tc.processed_data_path, 'validation', f'{experiment_type}'), exist_ok=True)  # to save the clustering results
 
+    if experiment_type.startswith('autoencoder'):
         # encode the features using the autoencoder
         X_train = torch.tensor(all_caths_train_imputed.values).float().to(device)
         X_test = torch.tensor(all_caths_test_imputed.values).float().to(device)
@@ -397,71 +368,36 @@ if __name__ == "__main__":
 
         print(f"Finished encoding the features using the autoencoder - latent dim = {params['latent_dim']}")
 
-        parallel_eval_job = eval_job_for_autoencoder_kmeans
-        task_func = functools.partial(parallel_eval_job, train_episodes_raw=train_episodes_raw,
-                                        test_episodes_raw=test_episodes_raw,
-                                        all_caths_train=all_caths_train,
-                                        all_caths_test=all_caths_test,
-                                        all_caths_train_imputed=all_caths_train_imputed,
-                                        all_caths_test_imputed=all_caths_test_imputed,
-                                        read_clusters_from_file=True,
-                                        experiment_type=experiment_type)
+    parallel_eval_job = eval_job_for_autoencoder_kmeans
+    task_func = functools.partial(parallel_eval_job, train_episodes_raw=train_episodes_raw,
+                                    test_episodes_raw=test_episodes_raw,
+                                    all_caths_train=all_caths_train,
+                                    all_caths_test=all_caths_test,
+                                    all_caths_train_imputed=all_caths_train_imputed,
+                                    all_caths_test_imputed=all_caths_test_imputed,
+                                    reward_function=reward_function,
+                                    read_clusters_from_file=True,
+                                    experiment_type=experiment_type)
 
-    # # Process the data
-    # all_results = []
-    # with ProcessPoolExecutor(max_workers=30) as executor:
-    #     # Schedule the tasks
-    #     futures = [executor.submit(task_func, n_clusters) for n_clusters in n_clusters_list]
-        
-    #     for future in as_completed(futures):
-    #         all_results.append(future.result())
-    n_jobs = max(1, os.cpu_count() - 7)   
+
+    n_jobs = max(1, os.cpu_count() - 7)  # use all available CPUs except 7  
     all_results = Parallel(n_jobs=n_jobs)(delayed(task_func)(n_clusters) for n_clusters in n_clusters_list)
-    # for n_clusters in n_clusters_list:
-    #     all_results.append(task_func(n_clusters))
-
-    #     results_df_temp = pd.DataFrame(all_results)
-    #     results_df_temp.to_csv(os.path.join('EXPERIMENTS_RESULTS', f'{experiment_name}_temp.csv'), index=False)
 
     # Convert all results to a DataFrame
     results_df = pd.DataFrame(all_results)
 
-    # add the expected values of the behavior policy to the results
-    behavior_plicy = PolicyResolver('physician_imitator', list(actions_dict.values()))
-    wis, ci = weighted_importance_sampling_with_bootstrap(test_episodes_raw, 0.99, behavior_plicy, behavior_plicy, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results_df['physician_imitator_wis'] = wis
-    results_df['physician_imitator_LB'] = ci[0]
-    results_df['physician_imitator_UB'] = ci[1]
-    wis, ci = weighted_importance_sampling_with_bootstrap(train_episodes_raw, 0.99, behavior_plicy, behavior_plicy, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results_df['physician_imitator_train_wis'] = wis
-    results_df['physician_imitator_train_LB'] = ci[0]
-    results_df['physician_imitator_train_UB'] = ci[1]
-
-    # add the expected values of the random policy to the results
-    random_policy = PolicyResolver('random', list(actions_dict.values()))
-    wis, ci = weighted_importance_sampling_with_bootstrap(test_episodes_raw, 0.99, random_policy, behavior_plicy, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results_df['random_wis'] = wis
-    results_df['random_LB'] = ci[0]
-    results_df['random_UB'] = ci[1]
-    wis, ci = weighted_importance_sampling_with_bootstrap(train_episodes_raw, 0.99, random_policy, behavior_plicy, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-    results_df['random_train_wis'] = wis
-    results_df['random_train_LB'] = ci[0]
-    results_df['random_train_UB'] = ci[1]
-
-    # add the expected values of the single action policies to the results
-    for action_name, action_id in actions_dict.items():
-        single_action_policy = PolicyResolver(action_name, list(actions_dict.values()))
-        wis, ci = weighted_importance_sampling_with_bootstrap(test_episodes_raw, 0.99, single_action_policy, behavior_plicy, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-        results_df[f'{action_name}_wis'] = wis
-        results_df[f'{action_name}_LB'] = ci[0]
-        results_df[f'{action_name}_UB'] = ci[1]
-        wis, ci = weighted_importance_sampling_with_bootstrap(train_episodes_raw, 0.99, single_action_policy, behavior_plicy, num_bootstrap_samples=500, N=1000, confidedence_level=0.95)
-        results_df[f'{action_name}_train_wis'] = wis
-        results_df[f'{action_name}_train_LB'] = ci[0]
-        results_df[f'{action_name}_train_UB'] = ci[1]
-
+    # Evaluate the policies with the behavior policy: Behavior Policy itself, a Random Policy, and Single Action Policies (CABG, Medical Therapy, PCI)
+    behavior_plicy = PolicyResolver('behavior_physician_policy', list(actions_dict.values()))
+    for dataset_name, dataset in [('test', test_episodes_raw), ('train', train_episodes_raw)]:
+        for policy_name in ['behavior_physician_policy', 'random'] + list(actions_dict.keys()):
+            policy_resolver = PolicyResolver(policy_name, list(actions_dict.values()))
+            wis, ci = weighted_importance_sampling_with_bootstrap(dataset, 0.99, policy_resolver, behavior_plicy,
+                                                                  num_bootstrap_samples=1000, N=1000, confidedence_level=0.95)
+            results_df[f'{policy_name}_{dataset_name}'] = wis
+            results_df[f'{policy_name}_{dataset_name}_LB'] = ci[0]
+            results_df[f'{policy_name}_{dataset_name}_UB'] = ci[1]
 
     # Save the results to a CSV file
-    file_name = os.path.join('EXPERIMENTS_RESULTS', f'{experiment_name}.csv')
+    file_name = os.path.join(tc.EXPERIMENTS_RESULTS, f'{experiment_name}.csv')
     results_df.sort_values(by='n_clusters', inplace=True)
     results_df.to_csv(file_name, index=False)

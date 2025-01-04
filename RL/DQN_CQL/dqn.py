@@ -16,8 +16,7 @@ import datetime
 from torch.optim import Adam
 import argparse
 from rl_utils import PolicyResolver, weighted_importance_sampling_with_bootstrap
-from train_physician_imitation_model import PhysicianImitator
-from autoencoder_training import Autoencoder
+from QL.autoencoder_sigmoid_training import Autoencoder
 import itertools
 
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")

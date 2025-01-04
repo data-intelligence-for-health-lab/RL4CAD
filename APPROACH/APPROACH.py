@@ -7,13 +7,13 @@ import pickle
 import pandas as pd
 from types import SimpleNamespace
 import psycopg2
-import Aim1.constants as cons
+import APPROACH.constants as cons
 from os.path import join
-from Aim1.summarize_HRQOL import summarize_EQ5D, summarize_SAQ
-from Aim1.lab_data_cleaning_helper import LabDataCleaningHelper
-import Aim1.approach_cleaning_helper as approach_helper
-import Aim1.ICDcodeHelper as icd
-from Aim1.PandasCadExtension import JsonForCadAccessor
+from APPROACH.summarize_HRQOL import summarize_EQ5D, summarize_SAQ
+from APPROACH.lab_data_cleaning_helper import LabDataCleaningHelper
+import APPROACH.approach_cleaning_helper as approach_helper
+import APPROACH.ICDcodeHelper as icd
+from APPROACH.PandasCadExtension import JsonForCadAccessor
 
 pd.options.mode.chained_assignment = None  # default='warn'
 

@@ -1,4 +1,4 @@
-import Aim1.constants as cons
+import APPROACH.constants as cons
 
 
 def summarize_EQ5D(mobility_level, self_care_level, usual_activities_level, pain_discomfort_level,

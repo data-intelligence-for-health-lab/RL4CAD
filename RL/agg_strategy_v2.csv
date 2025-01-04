@@ -1,0 +1,460 @@
+Variable_name,include_in_cath,include_in_checkup,aggregation_strategy,variable_type
+Procedure Number,0,0,recent,int
+Procedure Table,0,0,recent,str
+Procedure Standard Time,0,0,recent,
+JsonInfo,0,0,,
+File No,0,0,max,int
+Age_at_cath,1,1,max,float
+Sex_Female,1,1,or,binary
+Facility_FMC,1,0,recent_cath,binary
+Facility_RAH,1,0,recent_cath,binary
+Facility_UAH,1,0,recent_cath,binary
+heightcm,1,0,recent_cath,float
+weightkg,1,0,recent_cath,float
+CCS_0 None,1,0,recent_cath,binary
+CCS_Atypical,1,0,recent_cath,binary
+CCS_I Strenuous,1,0,recent_cath,binary
+CCS_II Slight Limit,1,0,recent_cath,binary
+CCS_III Marked Limit,1,0,recent_cath,binary
+CCS_IVa Hosp. with ACS,1,0,recent_cath,binary
+CCS_IVb,1,0,recent_cath,binary
+CCS_IVc,1,0,recent_cath,binary
+CCS_Not Entered,1,0,recent_cath,binary
+Priority_Emergency,1,0,recent_cath,binary
+Priority_Emergent Salvage,1,0,recent_cath,binary
+Priority_Out Patient,1,0,recent_cath,binary
+Priority_Urgent In Hospital/Transfer,1,0,recent_cath,binary
+Priority_Urgent Out of Hospital,1,0,recent_cath,binary
+procedures_completed_Diagnostic: Coronary Angiogram,1,0,recent_cath,binary
+procedures_completed_LV Angiogram,1,0,recent_cath,binary
+procedures_completed_Left Heart Cath,1,0,recent_cath,binary
+procedures_completed_Graft Angiogram,1,0,recent_cath,binary
+procedures_completed_Right Heart Catheterization,1,0,recent_cath,binary
+procedures_completed_Radial Angiogram,1,0,recent_cath,binary
+procedures_completed_Adjunct: Pressure Wire Measurements,1,0,recent_cath,binary
+procedures_completed_Aortic Root,1,0,recent_cath,binary
+procedures_completed_Iliac/Femoral Angiogram,1,0,recent_cath,binary
+procedures_completed_Cardiac Output-Thermal,1,0,recent_cath,binary
+indicationtyp_Acute Coronary Syndrome,1,0,recent_cath,binary
+indicationtyp_Congestive Heart Failure,1,0,recent_cath,binary
+indicationtyp_Other,1,0,recent_cath,binary
+indicationtyp_Stable Angina,1,0,recent_cath,binary
+indicationtyp_Valvular Heart Disease,1,0,recent_cath,binary
+indicationtyp_other,1,0,recent_cath,binary
+indicationdx_NSTEMI,1,0,recent_cath,binary
+indicationdx_Not Entered,1,0,recent_cath,binary
+indicationdx_Unstable Angina,1,0,recent_cath,binary
+symptoms_Arrhythmia,1,0,recent_cath,binary
+symptoms_CHF,1,0,recent_cath,binary
+symptoms_Not Entered,1,0,recent_cath,binary
+symptoms_Ongoing ,1,0,recent_cath,binary
+symptoms_Re-MI,1,0,recent_cath,binary
+symptoms_Recurrent pain,1,0,recent_cath,binary
+Smoking_Curr,1,0,recent_cath,binary
+Smoking_Never,1,0,recent_cath,binary
+Smoking_Past,1,0,recent_cath,binary
+Diabetes_No,1,0,recent_cath,binary
+Diabetes_Type I,1,0,recent_cath,binary
+Diabetes_Type II,1,0,recent_cath,binary
+diabtherapy_Insulin,1,0,recent_cath,binary
+diabtherapy_Oral,1,0,recent_cath,binary
+diabtherapy_Other,1,0,recent_cath,binary
+pre_shock,1,0,recent_cath,binary
+pre_cardiac_arrest,1,0,recent_cath,binary
+pre_chf,1,0,recent_cath,binary
+pre_intubate,1,0,recent_cath,binary
+pre_inotrope,1,0,recent_cath,binary
+pre_IABP,1,0,recent_cath,binary
+pre_none,1,0,recent_cath,binary
+syncope,1,0,recent_cath,binary
+dyslipedimia,1,0,recent_cath,binary
+HF,1,0,recent_cath,binary
+HF2wks,1,0,recent_cath,binary
+Afib,1,0,recent_cath,binary
+pulmonaryhten,1,0,recent_cath,binary
+hypertension,1,0,recent_cath,binary
+Angina,1,0,recent_cath,binary
+FamHx,1,0,recent_cath,binary
+IE,1,0,recent_cath,binary
+PE,1,0,recent_cath,binary
+Radiation,1,0,recent_cath,binary
+SleepApnea,1,0,recent_cath,binary
+HomeO2,1,0,recent_cath,binary
+CLD,1,0,recent_cath,binary
+CEV,1,0,recent_cath,binary
+Delirium,1,0,recent_cath,binary
+Psych,1,0,recent_cath,binary
+CEVD,1,0,recent_cath,binary
+Renal,1,0,recent_cath,binary
+CKD,1,0,recent_cath,binary
+AKI,1,0,recent_cath,binary
+Dialysis,1,0,recent_cath,binary
+PAD,1,0,recent_cath,binary
+Venous,1,0,recent_cath,binary
+Varicose,1,0,recent_cath,binary
+VeinStripping,1,0,recent_cath,binary
+DVT,1,0,recent_cath,binary
+PUD,1,0,recent_cath,binary
+Liver,1,0,recent_cath,binary
+Hypothyroid,1,0,recent_cath,binary
+Hyperthyroid,1,0,recent_cath,binary
+Metabolic,1,0,recent_cath,binary
+Immuno,1,0,recent_cath,binary
+Steroid,1,0,recent_cath,binary
+rheumatoid,1,0,recent_cath,binary
+coagulopathy,1,0,recent_cath,binary
+malignancy,1,0,recent_cath,binary
+druguse,1,0,recent_cath,binary
+HIV,1,0,recent_cath,binary
+Alcohol,1,0,recent_cath,binary
+ASA,1,0,recent_cath,binary
+ExtentCAD_1 - VD ( > 75% proximal LAD),1,0,recent_cath,binary
+ExtentCAD_1 - VD ( > 75%),1,0,recent_cath,binary
+ExtentCAD_1 VD (50% - 75%),1,0,recent_cath,binary
+ExtentCAD_2 - VD ( > 75% LAD),1,0,recent_cath,binary
+ExtentCAD_2 - VD ( > 75% proximal LAD),1,0,recent_cath,binary
+ExtentCAD_2 - VD (both > 75%),1,0,recent_cath,binary
+ExtentCAD_2 - Vessel Disease,1,0,recent_cath,binary
+ExtentCAD_3 - VD ( > 75% proximal LAD),1,0,recent_cath,binary
+ExtentCAD_3 - VD (one > 75%),1,0,recent_cath,binary
+ExtentCAD_3 - VD (proximal LAD),1,0,recent_cath,binary
+ExtentCAD_3 Vessel Disease,1,0,recent_cath,binary
+ExtentCAD_Left Main Disease,1,0,recent_cath,binary
+ExtentCAD_Severe Left Main,1,0,recent_cath,binary
+days_since_prior_cath,1,0,recent_cath,int
+time_since_prior_pci,1,0,recent_cath,int
+time_since_prior_cabg,1,0,recent_cath,int
+time_since_prior_mi,1,0,recent_cath,int
+Dominance_Left,1,0,recent_cath,binary
+Dominance_Mixed,1,0,recent_cath,binary
+Dominance_Right,1,0,recent_cath,binary
+dukeJeopardy,1,0,recent_cath,float
+approachJeopardy,1,0,recent_cath,float
+dukeCoronaryIndex,1,0,recent_cath,float
+lvs1,1,0,recent_cath,float
+lvs2,1,0,recent_cath,float
+lvs3,1,0,recent_cath,float
+lvs4,1,0,recent_cath,float
+lvs5,1,0,recent_cath,float
+lvs6,1,0,recent_cath,float
+lvs7,1,0,recent_cath,float
+lvs8,1,0,recent_cath,float
+lvs9,1,0,recent_cath,float
+lvs10,1,0,recent_cath,float
+lvs11,1,0,recent_cath,float
+lvs12,1,0,recent_cath,float
+lvs13,1,0,recent_cath,float
+lvs14,1,0,recent_cath,float
+lvs15,1,0,recent_cath,float
+lvs16,1,0,recent_cath,float
+lvs17,1,0,recent_cath,float
+Procedure Number of corr. Cath,0,0,recent_cath,int
+IsCardiovascularDeath,0,0,,binary
+HasAMI,0,0,,binary
+HasStroke,0,0,,binary
+RIWCost,0,0,,float
+I,1,1,or,icd_binary
+A30-A49,1,1,or,icd_binary
+B95-B98,1,1,or,icd_binary
+II,1,1,or,icd_binary
+C76-C80,1,1,or,icd_binary
+C81-C96,1,1,or,icd_binary
+D10-D36,1,1,or,icd_binary
+D50-D53,1,1,or,icd_binary
+III,1,1,or,icd_binary
+E00-E07,1,1,or,icd_binary
+E10,1,1,or,icd_binary
+E11,1,1,or,icd_binary
+E1152,1,1,or,icd_binary
+E117,1,1,or,icd_binary
+E14,1,1,or,icd_binary
+E20-E35,1,1,or,icd_binary
+E65-E68,1,1,or,icd_binary
+E70-E90,1,1,or,icd_binary
+E87,1,1,or,icd_binary
+V,1,1,or,icd_binary
+F10-F19,1,1,or,icd_binary
+VI,1,1,or,icd_binary
+G40-G47,1,1,or,icd_binary
+G99,1,1,or,icd_binary
+VII,1,1,or,icd_binary
+VIII,1,1,or,icd_binary
+I100,1,1,or,icd_binary
+I10-I15,1,1,or,icd_binary
+I20,1,1,or,icd_binary
+I21,1,1,or,icd_binary
+I24,1,1,or,icd_binary
+I25,1,1,or,icd_binary
+I2510,1,1,or,icd_binary
+I26-I28,1,1,or,icd_binary
+I35,1,1,or,icd_binary
+I42,1,1,or,icd_binary
+I44,1,1,or,icd_binary
+I47,1,1,or,icd_binary
+I480,1,1,or,icd_binary
+I489,1,1,or,icd_binary
+I49,1,1,or,icd_binary
+I50,1,1,or,icd_binary
+I51,1,1,or,icd_binary
+I60-I69,1,1,or,icd_binary
+I70-I79,1,1,or,icd_binary
+I95-I99,1,1,or,icd_binary
+X,1,1,or,icd_binary
+J09-J18,1,1,or,icd_binary
+J44,1,1,or,icd_binary
+J95-J99,1,1,or,icd_binary
+XI,1,1,or,icd_binary
+K20-K31,1,1,or,icd_binary
+K40-K46,1,1,or,icd_binary
+K55-K64,1,1,or,icd_binary
+K80-K87,1,1,or,icd_binary
+XII,1,1,or,icd_binary
+M00-M25,1,1,or,icd_binary
+M17,1,1,or,icd_binary
+M40-M54,1,1,or,icd_binary
+M60-M79,1,1,or,icd_binary
+M80-M94,1,1,or,icd_binary
+N00-N08,1,1,or,icd_binary
+N10-N16,1,1,or,icd_binary
+N17,1,1,or,icd_binary
+N18,1,1,or,icd_binary
+N20-N23,1,1,or,icd_binary
+N30-N39,1,1,or,icd_binary
+N40-N51,1,1,or,icd_binary
+N80-N98,1,1,or,icd_binary
+N99,1,1,or,icd_binary
+XVII,1,1,or,icd_binary
+R00-R09,1,1,or,icd_binary
+XVIII,1,1,or,icd_binary
+R10-R19,1,1,or,icd_binary
+R25-R29,1,1,or,icd_binary
+R30-R39,1,1,or,icd_binary
+R40-R46,1,1,or,icd_binary
+R50-R69,1,1,or,icd_binary
+R70-R79,1,1,or,icd_binary
+R9430,1,1,or,icd_binary
+S00-S09,1,1,or,icd_binary
+XIX,1,1,or,icd_binary
+T36-T50,1,1,or,icd_binary
+XXII,1,1,or,icd_binary
+V01-V99,1,1,or,icd_binary
+V01-X59,1,1,or,icd_binary
+Y40-Y59,1,1,or,icd_binary
+Y60-Y69,1,1,or,icd_binary
+Y83,1,1,or,icd_binary
+Y83-Y84,1,1,or,icd_binary
+Z20-Z29,1,1,or,icd_binary
+Z40-Z54,1,1,or,icd_binary
+Z54,1,1,or,icd_binary
+Z55-Z65,1,1,or,icd_binary
+Z70-Z76,1,1,or,icd_binary
+Z80-Z99,1,1,or,icd_binary
+Z82,1,1,or,icd_binary
+Z85,1,1,or,icd_binary
+Z86,1,1,or,icd_binary
+Z95,1,1,or,icd_binary
+E115,1,1,or,icd_binary
+E78,1,1,or,icd_binary
+H25-H28,1,1,or,icd_binary
+H30-H36,1,1,or,icd_binary
+IX,1,1,or,icd_binary
+I10,1,1,or,icd_binary
+I20-I25,1,1,or,icd_binary
+I251,1,1,or,icd_binary
+I30-I52,1,1,or,icd_binary
+I48,1,1,or,icd_binary
+I509,1,1,or,icd_binary
+I80-I89,1,1,or,icd_binary
+J40-J47,1,1,or,icd_binary
+K57,1,1,or,icd_binary
+K63,1,1,or,icd_binary
+K90-K93,1,1,or,icd_binary
+K929,1,1,or,icd_binary
+XIV,1,1,or,icd_binary
+N17-N19,1,1,or,icd_binary
+N28,1,1,or,icd_binary
+R07,1,1,or,icd_binary
+R90-R94,1,1,or,icd_binary
+S60-S69,1,1,or,icd_binary
+T80-T88,1,1,or,icd_binary
+W00-W19,1,1,or,icd_binary
+W20-W49,1,1,or,icd_binary
+Y40-Y84,1,1,or,icd_binary
+Z01,1,1,or,icd_binary
+Z018,1,1,or,icd_binary
+Z03,1,1,or,icd_binary
+Z08,1,1,or,icd_binary
+Z09,1,1,or,icd_binary
+Z12,1,1,or,icd_binary
+Z13,1,1,or,icd_binary
+Z45,1,1,or,icd_binary
+Z47,1,1,or,icd_binary
+Z48,1,1,or,icd_binary
+Z49,1,1,or,icd_binary
+Z50,1,1,or,icd_binary
+Z501,1,1,or,icd_binary
+Z51,1,1,or,icd_binary
+Z713,1,1,or,icd_binary
+Z718,1,1,or,icd_binary
+EQ5D Utility Score,0,0,,float
+SAQ Utility Score,0,0,,float
+Proc Cost Dollars,0,0,,float
+creatinine,1,1,mean,lab_float
+hemoglobin,1,1,mean,lab_float
+red blood count,1,1,mean,lab_float
+hematocrit,1,1,mean,lab_float
+platelet count,1,1,mean,lab_float
+white blood count,1,1,mean,lab_float
+potassium,1,1,mean,lab_float
+sodium,1,1,mean,lab_float
+chloride,1,1,mean,lab_float
+neut,1,1,mean,lab_float
+carbon dioxide,1,1,mean,lab_float
+glomerular filtration rate estimate,1,1,mean,lab_float
+alanine aminotransferase,1,1,mean,lab_float
+cholesterol,1,1,mean,lab_float
+triglycerides,1,1,mean,lab_float
+hdl cholesterol,1,1,mean,lab_float
+ldl cholesterol,1,1,mean,lab_float
+glucose random,1,1,mean,lab_float
+thyroid stimulating hormone,1,1,mean,lab_float
+urea,1,1,mean,lab_float
+hemoglobin a1c,1,1,mean,lab_float
+prothromb time international ratio,1,1,mean,lab_float
+alkaline phosphatase,1,1,mean,lab_float
+magnesium,1,1,mean,lab_float
+calcium,1,1,mean,lab_float
+bilirubin total,1,1,mean,lab_float
+nrbc,1,1,mean,lab_float
+albumin,1,1,mean,lab_float
+ferritin,1,1,mean,lab_float
+creatinine_APPROX,0,0,,
+hemoglobin_APPROX,0,0,,
+red blood count_APPROX,0,0,,
+hematocrit_APPROX,0,0,,
+platelet count_APPROX,0,0,,
+white blood count_APPROX,0,0,,
+potassium_APPROX,0,0,,
+sodium_APPROX,0,0,,
+chloride_APPROX,0,0,,
+neut_APPROX,0,0,,
+carbon dioxide_APPROX,0,0,,
+glomerular filtration rate estimate_APPROX,0,0,,
+alanine aminotransferase_APPROX,0,0,,
+cholesterol_APPROX,0,0,,
+triglycerides_APPROX,0,0,,
+hdl cholesterol_APPROX,0,0,,
+ldl cholesterol_APPROX,0,0,,
+glucose random_APPROX,0,0,,
+thyroid stimulating hormone_APPROX,0,0,,
+urea_APPROX,0,0,,
+hemoglobin a1c_APPROX,0,0,,
+prothromb time international ratio_APPROX,0,0,,
+alkaline phosphatase_APPROX,0,0,,
+magnesium_APPROX,0,0,,
+calcium_APPROX,0,0,,
+bilirubin total_APPROX,0,0,,
+nrbc_APPROX,0,0,,
+albumin_APPROX,0,0,,
+ferritin_APPROX,0,0,,
+ATC_A01,1,1,or,atc_binary
+ATC_A02,1,1,or,atc_binary
+ATC_A02BA,1,1,or,atc_binary
+ATC_A02BC02,1,1,or,atc_binary
+ATC_A03,1,1,or,atc_binary
+ATC_A04,1,1,or,atc_binary
+ATC_A06A,1,1,or,atc_binary
+ATC_A07,1,1,or,atc_binary
+ATC_A10A,1,1,or,atc_binary
+ATC_A10BA02,1,1,or,atc_binary
+ATC_A10BB,1,1,or,atc_binary
+ATC_A10BD,1,1,or,atc_binary
+ATC_A10BH,1,1,or,atc_binary
+ATC_A10BK,1,1,or,atc_binary
+ATC_A10BX,1,1,or,atc_binary
+ATC_A11,1,1,or,atc_binary
+ATC_A12,1,1,or,atc_binary
+ATC_B01,1,1,or,atc_binary
+ATC_B01AA,1,1,or,atc_binary
+ATC_B01AC04,1,1,or,atc_binary
+ATC_B01AC06,1,1,or,atc_binary
+ATC_B01AF,1,1,or,atc_binary
+ATC_B03,1,1,or,atc_binary
+ATC_C01AA,1,1,or,atc_binary
+ATC_C01B,1,1,or,atc_binary
+ATC_C01D,1,1,or,atc_binary
+ATC_C02,1,1,or,atc_binary
+ATC_C03AA,1,1,or,atc_binary
+ATC_C03BA,1,1,or,atc_binary
+ATC_C03C,1,1,or,atc_binary
+ATC_C03D,1,1,or,atc_binary
+ATC_C03EA01,1,1,or,atc_binary
+ATC_C05,1,1,or,atc_binary
+ATC_C07,1,1,or,atc_binary
+ATC_C07AB02,1,1,or,atc_binary
+ATC_C07AG,1,1,or,atc_binary
+ATC_C08C,1,1,or,atc_binary
+ATC_C08D,1,1,or,atc_binary
+ATC_C09A,1,1,or,atc_binary
+ATC_C09AA04,1,1,or,atc_binary
+ATC_C09AA05,1,1,or,atc_binary
+ATC_C09B,1,1,or,atc_binary
+ATC_C09CA,1,1,or,atc_binary
+ATC_C09D,1,1,or,atc_binary
+ATC_C10AA,1,1,or,atc_binary
+ATC_C10AA05,1,1,or,atc_binary
+ATC_C10AB,1,1,or,atc_binary
+ATC_C10AX,1,1,or,atc_binary
+ATC_D,1,1,or,atc_binary
+ATC_D01,1,1,or,atc_binary
+ATC_D05,1,1,or,atc_binary
+ATC_D06,1,1,or,atc_binary
+ATC_D07A,1,1,or,atc_binary
+ATC_G03,1,1,or,atc_binary
+ATC_G04B,1,1,or,atc_binary
+ATC_G04CA,1,1,or,atc_binary
+ATC_G04CB,1,1,or,atc_binary
+ATC_H02,1,1,or,atc_binary
+ATC_H03,1,1,or,atc_binary
+ATC_J01A,1,1,or,atc_binary
+ATC_J01C,1,1,or,atc_binary
+ATC_J01D,1,1,or,atc_binary
+ATC_J01E,1,1,or,atc_binary
+ATC_J01F,1,1,or,atc_binary
+ATC_J01MA,1,1,or,atc_binary
+ATC_J01X,1,1,or,atc_binary
+ATC_J02,1,1,or,atc_binary
+ATC_J05A,1,1,or,atc_binary
+ATC_J07,1,1,or,atc_binary
+ATC_L,1,1,or,atc_binary
+ATC_M,1,1,or,atc_binary
+ATC_M01,1,1,or,atc_binary
+ATC_M01AB,1,1,or,atc_binary
+ATC_M03,1,1,or,atc_binary
+ATC_M04A,1,1,or,atc_binary
+ATC_M05,1,1,or,atc_binary
+ATC_N02A,1,1,or,atc_binary
+ATC_N02AA,1,1,or,atc_binary
+ATC_N02B,1,1,or,atc_binary
+ATC_N03,1,1,or,atc_binary
+ATC_N04,1,1,or,atc_binary
+ATC_N05A,1,1,or,atc_binary
+ATC_N05B,1,1,or,atc_binary
+ATC_N05C,1,1,or,atc_binary
+ATC_N06,1,1,or,atc_binary
+ATC_N06AB,1,1,or,atc_binary
+ATC_N07,1,1,or,atc_binary
+ATC_N07CA,1,1,or,atc_binary
+ATC_P,1,1,or,atc_binary
+ATC_R01,1,1,or,atc_binary
+ATC_R03A,1,1,or,atc_binary
+ATC_R03B,1,1,or,atc_binary
+ATC_R03D,1,1,or,atc_binary
+ATC_R05,1,1,or,atc_binary
+ATC_R06,1,1,or,atc_binary
+ATC_S,1,1,or,atc_binary
+ATC_S01AE,1,1,or,atc_binary
+ATC_S01E,1,1,or,atc_binary
+ATC_S02,1,1,or,atc_binary
+ATC_V,1,1,or,atc_binary
+SubsequentTreatment,0,0,recent_cath,str

@@ -1,5 +1,4 @@
 import sys
-sys.path.insert(0,'/home/peyman.ghasemi1/projects/APPROACH-Data-Analysis')
 
 import os
 import numpy as np
@@ -11,7 +10,7 @@ import pandas as pd
 from multiprocessing import Process, Manager, Pool
 import logging
 import training_constants as tc
-from Aim1.APPROACH import Cohort, Patient
+from APPROACH.APPROACH import Cohort, Patient
 
 logging.basicConfig(filename='my_log.log',  # Set the log file name
                     level=logging.DEBUG,     # Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
