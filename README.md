@@ -3,12 +3,19 @@
 
 This repository contains the codes and resources related to the following paper:
 
-    @article{ghasemi2024RL4CAD,
-    title={Personalized Decision Making for Coronary Artery Disease Treatment using Offline Reinforcement Learning},
-    author={Ghasemi, Peyman and Greenberg, Matthew and Southern, Danielle A and Li, Bing and White, James A and Lee, Joon},
-    year={2024},
-    journal={Preprint}
-    }
+    @article{ghasemi_personalized_2025,
+	title = {Personalized decision making for coronary artery disease treatment using offline reinforcement learning},
+	volume = {8},
+	issn = {2398-6352},
+	url = {https://doi.org/10.1038/s41746-025-01498-1},
+	doi = {10.1038/s41746-025-01498-1},
+	number = {1},
+	journal = {npj Digital Medicine},
+	author = {Ghasemi, Peyman and Greenberg, Matthew and Southern, Danielle A. and Li, Bing and White, James A. and Lee, Joon},
+	month = feb,
+	year = {2025},
+	pages = {99},
+}
 
 
 ### Abstract
