@@ -15,7 +15,7 @@ This repository contains the codes and resources related to the following paper:
 	month = feb,
 	year = {2025},
 	pages = {99},
-}
+	}
 
 
 ### Abstract
