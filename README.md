@@ -1,7 +1,7 @@
 # RL4CAD
 ## RL4CAD: Personalized Decision Making for Coronary Artery Disease Treatment using Offline Reinforcement Learning
 
-This repository contains the codes and resources related to the following paper:
+This repository contains the codes and resources related to [the following paper](https://www.nature.com/articles/s41746-025-01498-1):
 
     @article{ghasemi_personalized_2025,
 	title = {Personalized decision making for coronary artery disease treatment using offline reinforcement learning},
