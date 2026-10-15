@@ -4,11 +4,12 @@
 
 This repository contains the codes and resources related to the following paper:
 
-    @article{ghasemi2024RLTL,
-    title={Addressing Distribution Shifts in Optimization of Coronary Artery Disease Treatment Using Reinforcement and Transfer Learning},
+    @article{ghasemi2026investigating,
+    title={Investigating clinical practice variations in coronary artery disease treatment using reinforcement and transfer learning},
     author={Ghasemi, Peyman and Greenberg, Matthew and Southern, Danielle A and Li, Bing and White, James A and Lee, Joon},
-    year={2024},
-    journal={Preprint}
+    journal={npj Cardiovascular Health},
+    year={2026},
+    publisher={Nature Publishing Group UK London}
     }
 
 
