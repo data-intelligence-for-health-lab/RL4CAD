@@ -2,7 +2,7 @@
 ## Addressing Distribution Shifts in Optimization of Coronary Artery Disease Treatment Using Reinforcement and Transfer Learning
 
 
-This repository contains the codes and resources related to the following paper:
+This repository contains the codes and resources related to [the following paper](https://www.nature.com/articles/s44325-026-00147-0):
 
     @article{ghasemi2026investigating,
     title={Investigating clinical practice variations in coronary artery disease treatment using reinforcement and transfer learning},
